@@ -1,12 +1,12 @@
 <template>
-  <div class="gm-input" @click.stop="select($event)" ref="myid"
-    :class="{ 'focus': focus, 'empty': empty, 'mandatory': mandatory, 'visited': visited, 'disabled': disabled }">
+  <div class="gm-input" @click.stop="setFocus($event)" ref="myid"
+    :class="{ 'focus': focus, 'empty': empty, 'mandatory': mandatory, 'visited': visited, 'disabled': disabled }, type">
     <label>
       <div class="label-value" for="">{{ label }}</div>
       <div v-if="mandatory && !disabled" class="mandatory-char">*</div>
     </label>
-    <input type="text" :value="value" @focus="focus = true" @focusout="leave"
-      @input="$emit('update:value', $event.target.value)" :disabled="disabled">
+    <input :type="type" :value="value" @focus="focus = true" @focusout="leave"
+      @input="$emit('update:value', $event.target.value)" :disabled="disabled" max="2022-12-31">
   </div>
 </template>
 
@@ -22,15 +22,15 @@ export default {
   },
 
   methods: {
-    select(e) {
-      if (this.disabled) {
+    setFocus(e) {
+      if (this.disabled || this.focus) {
         return
       }
       this.focus = true
       const input = e.currentTarget.querySelector('input');
-      setTimeout(() => {
-        input.focus();
-      }, 10);
+
+      input.focus();
+
     },
 
     leave() {
@@ -49,6 +49,10 @@ export default {
   props: {
     label: String,
     value: String,
+    type: {
+      type: String,
+      default: 'text'
+    },
     mandatory: {
       type: Boolean,
       default: false
@@ -67,6 +71,8 @@ $gm-color-main: #0025A4;
 $gm-color-red: #F35B5B;
 
 .gm-input {
+  cursor: text;
+
   box-sizing: border-box;
   position: relative;
 
@@ -74,7 +80,7 @@ $gm-color-red: #F35B5B;
   padding: 9px 12px;
 
   background: #FFFFFF;
-  outline: 1px solid rgba($gm-color-black, 0.04);
+  box-shadow: 0 0 0 1px rgba($gm-color-black, 0.04);
   border-radius: 6px;
 
   font-family: 'Inter',
@@ -90,7 +96,6 @@ $gm-color-red: #F35B5B;
 
 
   input {
-    // visibility: hidden;
     position: absolute;
     top: 23px;
     left: 12px;
@@ -105,6 +110,10 @@ $gm-color-red: #F35B5B;
 
     font-size: inherit;
     letter-spacing: inherit;
+
+    &::placeholder {
+      color: rgba($gm-color-black, 0.2);
+    }
   }
 
   label {
@@ -127,10 +136,12 @@ $gm-color-red: #F35B5B;
   }
 
   &:hover:not(.focus, .disabled) {
-    outline: 1px solid rgba($gm-color-black, 0.2);
+    box-shadow: 0 0 0 1px rgba($gm-color-black, 0.2);
   }
 
   &.focus,
+  &.week,
+  &.date,
   &:not(.empty) {
 
     label {
@@ -147,11 +158,11 @@ $gm-color-red: #F35B5B;
   }
 
   &.focus {
-    outline: 1px solid rgba($gm-color-main, 0.7);
+    box-shadow: 0 0 0 1px rgba($gm-color-main, 0.7);
   }
 
   &.mandatory.empty.visited {
-    outline: 1px solid rgba($gm-color-red, 0.7);
+    box-shadow: 0 0 0 1px rgba($gm-color-red, 0.7);
   }
 }
 </style>
