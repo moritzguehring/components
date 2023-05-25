@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <Input class="vorname" label="Test label" v-model:value="vorname" :mandatory="true" :deactivated="false" />
+  <div class="main">
+    <Input class="vorname" label="Test label" v-model:value="vorname" :mandatory="false" :disabled="false" />
+    <Input class="vorname" label="Test 2" v-model:value="test" :mandatory="true" :disabled="false" />
+    <!-- <InputDropdown class="vorname" label="Test dropdown" v-model:value="test" :mandatory="true" :disabled="false" /> -->
   </div>
 </template>
 
@@ -8,7 +10,8 @@
 export default {
   data() {
     return {
-      vorname: 'Moritz'
+      vorname: '',
+      test: '1234',
     }
   },
 
@@ -25,6 +28,12 @@ export default {
 
 html {
   background-color: rgba(66, 97, 98, 0.06);
+}
+
+.main {
+  display: flex;
+  flex-flow: column;
+  gap: 12px;
 }
 
 .vorname {

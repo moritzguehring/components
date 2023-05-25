@@ -1,12 +1,15 @@
 <template>
   <div class="gm-input" @click.stop="select($event)" ref="myid"
-    :class="{ 'focus': focus, 'empty': empty, 'mandatory': mandatory, 'visited': visited, 'disabled': disabled }">
+    :class="{ 'active': active, 'empty': empty, 'mandatory': mandatory, 'visited': visited, 'deactivated': deactivated }"
+    v-click-outside="leave">
     <label>
       <div class="label-value" for="">{{ label }}</div>
-      <div v-if="mandatory && !disabled" class="mandatory-char">*</div>
+      <div v-if="mandatory && !deactivated" class="mandatory-char">*</div>
     </label>
-    <input type="text" :value="value" @focus="focus = true" @focusout="leave"
-      @input="$emit('update:value', $event.target.value)" :disabled="disabled">
+    <input type="text" :value="value" @input="$emit('update:value', $event.target.value)" disabled>
+    <div class="icon-dropdown">
+      >
+    </div>
   </div>
 </template>
 
@@ -16,28 +19,30 @@
 export default {
   data() {
     return {
-      focus: false,
+      active: false,
       visited: false,
+      focus: false
     }
   },
 
   methods: {
     select(e) {
-      if (this.disabled) {
+      if (this.deactivated) {
         return
       }
+      this.active = true
       this.focus = true
-      const input = e.currentTarget.querySelector('input');
-      setTimeout(() => {
-        input.focus();
-      }, 10);
+      // const input = e.currentTarget.querySelector('input');
+      // setTimeout(() => {
+      //   input.focus();
+      // }, 10);
     },
 
     leave() {
+      this.active = false
       if (this.focus) {
         this.visited = true
       }
-      this.focus = false
     }
   },
 
@@ -53,7 +58,7 @@ export default {
       type: Boolean,
       default: false
     },
-    disabled: {
+    deactivated: {
       type: Boolean,
       default: false
     }
@@ -84,13 +89,13 @@ $gm-color-red: #F35B5B;
 
   transition: outline 120ms ease-out;
 
-  &.disabled {
+  &.deactivated {
     opacity: 0.6;
   }
 
 
   input {
-    // visibility: hidden;
+    display: none;
     position: absolute;
     top: 23px;
     left: 12px;
@@ -126,11 +131,17 @@ $gm-color-red: #F35B5B;
     }
   }
 
-  &:hover:not(.focus, .disabled) {
+  .icon-dropdown {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+  }
+
+  &:hover:not(.active, .deactivated) {
     outline: 1px solid rgba($gm-color-black, 0.2);
   }
 
-  &.focus,
+  &.active,
   &:not(.empty) {
 
     label {
@@ -142,11 +153,11 @@ $gm-color-red: #F35B5B;
     }
 
     input {
-      visibility: visible;
+      display: block;
     }
   }
 
-  &.focus {
+  &.active {
     outline: 1px solid rgba($gm-color-main, 0.7);
   }
 
